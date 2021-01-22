@@ -30,6 +30,11 @@ dependencies:
   statusbar:
   animate_do:
   webview_flutter:
+  flutter_secure_storage:
+  http:
+  provider:
+  connectivity:
+  font_awesome_flutter:
 
 dev_dependencies:
   flutter_test:

@@ -3,24 +3,18 @@ import 'package:webview_flutter/webview_flutter.dart'
     show JavascriptChannel, JavascriptMessage, WebView, JavascriptMode;
 // * Custom
 import 'package:asistencias_v2/constants/constants.dart' show baseHttpURL;
+import 'package:asistencias_v2/storage/storage.dart' show FederacionStorage;
 
 class FederationLogin extends StatelessWidget {
   JavascriptChannel _createJavascriptChannel(BuildContext context) =>
       JavascriptChannel(
         name: 'Login',
         onMessageReceived: (JavascriptMessage message) {
-          // inicialize provider and saves data recived from login if succesfull in provider
-          // final waifuProvider =
-          // Provider.of<DatosFederacion>(context, listen: false);
-          // waifuProvider.initWaifuData(message.message);
-          //saves data from user when login in localstorage
-          // storeUser(message.message);
-          // TODO store data
-          print(message);
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/',
-            (route) => false,
+          FederacionStorage.storeData(context, message.message).then(
+            (_) {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, 'plantel', (route) => false);
+            },
           );
         },
       );
