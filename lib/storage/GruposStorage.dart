@@ -17,18 +17,19 @@ abstract class GruposStorage {
     await _storageGrupos.write(key: _secureKey, value: data);
   }
 
-  static void readData(BuildContext context) async {
+  static void readData(
+      BuildContext context, ConnectivityStatus connectionStatus) async {
     final gruposProvider = Provider.of<GruposProvider>(context, listen: false);
     final storedData = await _storageGrupos.read(key: _secureKey);
 
     if (storedData != null) return gruposProvider.initGruposData(storedData);
 
-    final connectionStatus =
-        Provider.of<ConnectivityStatus>(context, listen: false);
-    if (connectionStatus != ConnectivityStatus.Offline) {
-      final requestBody = await _fetchData(context);
-      storeData(context, requestBody);
-    }
+    if (connectionStatus == ConnectivityStatus.Offline) return;
+
+    final requestBody = await _fetchData(context);
+    if (requestBody == null) return;
+
+    storeData(context, requestBody);
   }
 
   static void deleteData(BuildContext context) async {

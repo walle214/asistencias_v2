@@ -31,8 +31,8 @@ _mainApp() {
     providers: [
       ChangeNotifierProvider(create: (context) => FederacionProvider()),
       ChangeNotifierProvider(create: (context) => GruposProvider()),
-      // ChangeNotifierProvider(create: (context) => DatosAlumnos()),
-      // ChangeNotifierProvider(create: (context) => DatosClases()),
+      ChangeNotifierProvider(create: (context) => AlumnosProvider()),
+      ChangeNotifierProvider(create: (context) => ClasesProvider()),
       StreamProvider<ConnectivityStatus>(
         create: (context) =>
             ConnectivityService().connectionStatusController.stream,
@@ -47,6 +47,7 @@ _mainApp() {
         '/': (_) => MainPage(),
         'federationLogin': (_) => FederationLogin(),
         'plantel': (_) => PlantelPage(),
+        'webviewFallback': (_) => WebViewFallback(),
       },
     ),
   );

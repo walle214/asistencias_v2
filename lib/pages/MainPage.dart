@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // * Custom
+import 'package:asistencias_v2/services/ConnectivityService.dart';
 import 'package:asistencias_v2/storage/storage.dart' show FederacionStorage;
 import 'package:asistencias_v2/widgets/buttons/buttons.dart';
 import 'package:asistencias_v2/providers/providers.dart'
@@ -9,16 +10,21 @@ import 'package:asistencias_v2/providers/providers.dart'
 class MainPage extends StatelessWidget {
   const MainPage({Key key}) : super(key: key);
 
-  _handleOnPressed(BuildContext context, bool logged) {
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      logged ? 'plantel' : 'federationLogin',
-      (route) => false,
-    );
+  _handleOnPressed(
+      BuildContext context, bool logged, ConnectivityStatus connectionStatus) {
+    if (!logged && connectionStatus == ConnectivityStatus.Offline)
+      Navigator.pushNamed(context, 'webviewFallback');
+    else
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        logged ? 'plantel' : 'federationLogin',
+        (route) => false,
+      );
   }
 
   @override
   Widget build(BuildContext context) {
+    final connectionStatus = Provider.of<ConnectivityStatus>(context);
     final imageWidth = MediaQuery.of(context).size.width * 0.4;
     final logged = !Provider.of<FederacionProvider>(context).isEmpty;
     if (!logged) FederacionStorage.readData(context);
@@ -26,13 +32,14 @@ class MainPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: _buildChildren(imageWidth, logged),
+          children: _buildChildren(imageWidth, logged, connectionStatus),
         ),
       ),
     );
   }
 
-  List<Widget> _buildChildren(double imageWidth, bool logged) {
+  List<Widget> _buildChildren(
+      double imageWidth, bool logged, ConnectivityStatus connectionStatus) {
     return [
       Image(
         width: imageWidth,
@@ -47,8 +54,9 @@ class MainPage extends StatelessWidget {
       ),
       Container(
         width: double.infinity,
-        child: LightBlueButton(
-            'Iniciar sesión', (context) => _handleOnPressed(context, logged)),
+        child: LightBlueButton('Iniciar sesión',
+            (context) => _handleOnPressed(context, logged, connectionStatus),
+            animate: false),
       )
     ];
   }

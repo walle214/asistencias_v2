@@ -7,6 +7,7 @@ import 'package:asistencias_v2/constants/constants.dart'
 typedef LightBlueCallback = void Function(BuildContext context);
 
 class LightBlueButton extends StatelessWidget {
+  static Color color = CustomColors.blue;
   final LightBlueCallback onPressed;
   final String text;
   final int delay;
@@ -16,7 +17,7 @@ class LightBlueButton extends StatelessWidget {
     this.onPressed, {
     Key key,
     this.delay = 0,
-    this.animate = false,
+    this.animate = true,
   }) : super(key: key);
 
   @override
@@ -34,7 +35,7 @@ class LightBlueButton extends StatelessWidget {
 
   FlatButton _buildRaisedButton(BuildContext context) {
     return FlatButton(
-      color: CustomColors.blue,
+      color: color,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 20.0),
         child: Text(

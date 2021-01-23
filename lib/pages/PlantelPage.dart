@@ -3,11 +3,12 @@ import 'package:provider/provider.dart';
 // * Custom
 import 'package:asistencias_v2/storage/storage.dart';
 import 'package:asistencias_v2/models/models.dart' show Plantel;
-import 'package:asistencias_v2/providers/providers.dart'
-    show FederacionProvider, GruposProvider;
+import 'package:asistencias_v2/providers/providers.dart' show GruposProvider;
 import 'package:asistencias_v2/widgets/widgets.dart' show TemplatePage;
 import 'package:asistencias_v2/widgets/buttons/buttons.dart'
     show LightBlueButton;
+import 'package:asistencias_v2/services/ConnectivityService.dart';
+import 'package:asistencias_v2/pages/pages.dart' show CarrerasPage;
 
 class PlantelPage extends StatelessWidget {
   const PlantelPage({Key key}) : super(key: key);
@@ -21,8 +22,11 @@ class PlantelPage extends StatelessWidget {
 
   Widget body(BuildContext context) {
     final providerDatosGrupos = Provider.of<GruposProvider>(context);
+    final connectionStatus =
+        Provider.of<ConnectivityStatus>(context, listen: false);
     // * readDatosGrupos manage localstorages and connections;
-    if (providerDatosGrupos.data == null) GruposStorage.readData(context);
+    if (providerDatosGrupos.data == null)
+      GruposStorage.readData(context, connectionStatus);
     final planteles = providerDatosGrupos.data?.plantel;
 
     if (planteles?.length == 0 || planteles == null)
@@ -35,9 +39,9 @@ class PlantelPage extends StatelessWidget {
 }
 
 class _PlantelList extends StatelessWidget {
-  _PlantelList({@required this.planteles});
-
   final List<Plantel> planteles;
+
+  const _PlantelList({@required this.planteles});
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +53,8 @@ class _PlantelList extends StatelessWidget {
         return LightBlueButton(
           plantel.nombre,
           (context) {
-            // _openCarreraPage(context, index, plantel.nombre);
-            print('$context, $index, ${plantel.nombre}');
+            _openCarreraPage(context, plantel, plantel.nombre);
+            // print('$context, $index, ${plantel.nombre}');
           },
           delay: delay,
         );
@@ -59,14 +63,14 @@ class _PlantelList extends StatelessWidget {
   }
 }
 
-// void _openCarreraPage(BuildContext context, int plantelIndex, String title) {
-//   Navigator.push(
-//     context,
-//     MaterialPageRoute(
-//       builder: (context) => CarrerasPage(
-//         indexPlantel: plantelIndex,
-//         title: title,
-//       ),
-//     ),
-//   );
-// }
+void _openCarreraPage(BuildContext context, Plantel plantel, String title) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => CarrerasPage(
+        plantel: plantel,
+        title: title,
+      ),
+    ),
+  );
+}
